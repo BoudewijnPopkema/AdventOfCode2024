@@ -3,36 +3,45 @@ using AdventOfCode2024.Solvers;
 
 var solvers = GetSolvers();
 
-Console.Write("Day and part(0 0): ");
+Console.Write("Day: ");
 var daySolver = GetSolver(Console.ReadLine()!); 
 Console.Write("Input file path: ");
 var input = GetInputFromFile(Console.ReadLine()!);
 
 Console.WriteLine("Running solver for day " + daySolver.Day + "...");
-var solution = daySolver.Solve(input);
-Console.WriteLine("Solution: " + solution);
+daySolver.LoadInputData(input);
+try
+{
+    Console.WriteLine("Part one: " + daySolver.SolvePartOne());
+    Console.WriteLine("Part two: " + daySolver.SolvePartTwo());
+}
+catch (NotImplementedException)
+{
+    Console.WriteLine("Part two not implemented yet.");
+}
+
 return;
 
-List<IDaySolver> GetSolvers() => [
-    new DayOnePartOneSolver(), 
-    new DayOnePartTwoSolver()
+// Local functions
+List<DaySolver> GetSolvers() => [
+    new DayOneSolver(), 
 ];
 
-IDaySolver GetSolver(string inputDayAndPart)
+DaySolver GetSolver(string inputDay)
 {
-    var day = int.Parse(inputDayAndPart.Split(" ")[0]);
-    var part = int.Parse(inputDayAndPart.Split(" ")[1]);
+    var day = int.Parse(inputDay);
     
-    var solver = solvers.FirstOrDefault(s => s.Day == day && s.Part == part);
+    var solver = solvers.FirstOrDefault(s => s.Day == day);
     if (solver == null)
     {
-        throw new ArgumentException("No solver found for day/part " + day + "/" + part);
+        throw new ArgumentException("No solver found for day " + day);
     }
     
     return solver;
 }
 
 string[] GetInputFromFile(string inputFilePath)
-{
-    return File.ReadAllLines(inputFilePath.Replace("\"", ""));
+{ 
+    inputFilePath = inputFilePath.Replace("\"", "");
+    return File.ReadAllLines(inputFilePath);
 }
