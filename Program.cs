@@ -25,6 +25,7 @@ return;
 // Local functions
 List<DaySolver> GetSolvers() => [
     new DayOneSolver(), 
+    new DayTwoSolver()
 ];
 
 DaySolver GetSolver(string inputDay)
