@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode2024;
+﻿namespace AdventOfCode2024.Solvers;
 public class DayTwoSolver : DaySolver
 {
     private List<List<int>> _reports = [];
@@ -9,31 +9,7 @@ public class DayTwoSolver : DaySolver
 
     public override string SolvePartOne()
     {
-        var safeReports = 0;
-
-        foreach (var report in _reports)
-        {
-            var allIncreasing = report.SequenceEqual(report.Order());
-            var allDecreasing = report.SequenceEqual(report.OrderDescending());
-
-            var smallDifferences = true;
-            var prevNr = report[0];
-
-            foreach (var currentNr in report.Skip(1))
-            {
-                var difference = Math.Abs(prevNr - currentNr);
-                prevNr = currentNr;
-                if (difference is >= 1 and <= 3) continue;
-                smallDifferences = false;
-            }
-
-            if ((allIncreasing || allDecreasing) && smallDifferences)
-            {
-                safeReports++;
-            }
-        }
-
-        return safeReports.ToString();
+        return _reports.Where(CheckIfSafe).Count().ToString();
     }
 
     public override string SolvePartTwo()
@@ -60,10 +36,10 @@ public class DayTwoSolver : DaySolver
         return safeReports.ToString();
     }
 
-    private static bool CheckIfSafe(List<int> variant)
+    private static bool CheckIfSafe(List<int> report)
     {
-        var allIncreasing = variant.SequenceEqual(variant.Order());
-        var allDecreasing = variant.SequenceEqual(variant.OrderDescending());
+        var allIncreasing = report.SequenceEqual(report.Order());
+        var allDecreasing = report.SequenceEqual(report.OrderDescending());
 
         if (!allIncreasing && !allDecreasing)
         {
@@ -71,9 +47,9 @@ public class DayTwoSolver : DaySolver
         }
         
         var smallDifferences = true;
-        var prevNr = variant[0];
+        var prevNr = report[0];
 
-        foreach (var currentNr in variant.Skip(1))
+        foreach (var currentNr in report.Skip(1))
         {
             var difference = Math.Abs(prevNr - currentNr);
             prevNr = currentNr;
