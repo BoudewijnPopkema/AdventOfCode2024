@@ -1,4 +1,5 @@
-﻿using AdventOfCode2024;
+﻿using System.Diagnostics;
+using AdventOfCode2024;
 using AdventOfCode2024.Solvers;
 
 var solvers = GetSolvers();
@@ -12,8 +13,13 @@ Console.WriteLine("Running solver for day " + daySolver.Day + "...");
 daySolver.LoadInputData(input);
 try
 {
-    Console.WriteLine("Part one: " + daySolver.SolvePartOne());
-    Console.WriteLine("Part two: " + daySolver.SolvePartTwo());
+    var stopwatch = new Stopwatch();
+    stopwatch.Start();
+    Console.Write("Part one: " + daySolver.SolvePartOne());
+    Console.WriteLine($" in {stopwatch.ElapsedMilliseconds}ms");
+    stopwatch.Restart();
+    Console.Write("Part two: " + daySolver.SolvePartTwo());
+    Console.WriteLine($" in {stopwatch.ElapsedMilliseconds}ms");
 }
 catch (NotImplementedException)
 {
@@ -25,7 +31,8 @@ return;
 // Local functions
 List<DaySolver> GetSolvers() => [
     new DayOneSolver(), 
-    new DayTwoSolver()
+    new DayTwoSolver(),
+    new DayTwelve2022Solver()
 ];
 
 DaySolver GetSolver(string inputDay)
@@ -44,5 +51,6 @@ DaySolver GetSolver(string inputDay)
 string[] GetInputFromFile(string inputFilePath)
 { 
     inputFilePath = inputFilePath.Replace("\"", "");
-    return File.ReadAllLines(inputFilePath);
+    var lines = File.ReadAllLines(inputFilePath);
+    return lines.Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
 }
