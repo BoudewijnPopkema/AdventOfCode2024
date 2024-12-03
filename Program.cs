@@ -32,6 +32,7 @@ return;
 List<DaySolver> GetSolvers() => [
     new DayOneSolver(), 
     new DayTwoSolver(),
+    new DayThreeSolver(),
     new DayTwelve2022Solver()
 ];
 
