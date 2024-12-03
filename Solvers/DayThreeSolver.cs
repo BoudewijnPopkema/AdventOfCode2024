@@ -2,57 +2,52 @@
 
 namespace AdventOfCode2024.Solvers;
 
-public partial class DayThreeSolver : DaySolver
+public class DayThreeSolver : DaySolver
 {
-    private List<Tuple<int, int>> _multiplications = [];
-    private string _input = string.Empty;
+    public override int Day => 3;
+    private MatchCollection? _matchCollection;
 
     public override void LoadInputData(string[] input)
     {
-        _input = string.Concat(input);
-        var matches = MultiplicationRegex().Matches(_input);
-        _multiplications =
-            matches.Select(s =>
-                    s.Value.Replace("mul(", "")
-                        .Replace(")", "")
-                        .Split(",")
-                ).Select(a => new Tuple<int, int>(int.Parse(a[0]), int.Parse(a[1])))
-                .ToList();
+        _matchCollection = new Regex(@"(?'mul'mul\(\d{1,3},\d{1,3}\))|(?'do'do\(\))|(?'dont'don't\(\))").Matches(string.Concat(input));
     }
 
     public override string SolvePartOne()
     {
-        return _multiplications.Sum(m => m.Item1 * m.Item2).ToString();
+        return _matchCollection!
+            .Where(x => GetGroupName(x) == "mul")
+            .Sum(x => GetMultiplicationValue(x.Value)).ToString();
     }
 
     public override string SolvePartTwo()
     {
-        while (true)
+        var enabled = true;
+        return _matchCollection!.Sum(match =>
         {
-            var dont = DontRegex().Match(_input);
-            if (!dont.Success) break;
-            
-            var nextDo = DoRegex().Match(_input[dont.Index..]);
-            if (!nextDo.Success)
+            switch (GetGroupName(match))
             {
-                _input = _input[..dont.Index];
-                break;
+                case "mul":
+                    return enabled ? GetMultiplicationValue(match.Value) : 0;
+                case "do":
+                    enabled = true;
+                    return 0;
+                case "dont":
+                    enabled = false;
+                    return 0;
+                default: return 0;
             }
-            _input = _input.Remove(dont.Index, nextDo.Index);
-        }
-
-        LoadInputData([_input]);
-        return SolvePartOne();
+        }).ToString();
     }
 
-    public override int Day => 3;
+    private static string GetGroupName(Match m) => m.Groups.Values.First(g => g.Success && g.GetType() == typeof(Group)).Name;
 
-    [GeneratedRegex(@"mul\(\d{1,3},\d{1,3}\)")]
-    private static partial Regex MultiplicationRegex();
-
-    [GeneratedRegex(@"do\(\)")]
-    private static partial Regex DoRegex();
-
-    [GeneratedRegex(@"don't\(\)")]
-    private static partial Regex DontRegex();
+    private static int GetMultiplicationValue(string s)
+    {
+        var values =
+            s.Replace("mul(", "")
+                .Replace(")", "")
+                .Split(",")
+                .Select(int.Parse).ToArray();
+        return values[0] * values[1];
+    }
 }
