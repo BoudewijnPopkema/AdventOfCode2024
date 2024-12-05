@@ -34,6 +34,7 @@ List<DaySolver> GetSolvers() => [
     new DayTwoSolver(),
     new DayThreeSolver(),
     new DayFourSolver(),
+    new DayFiveSolver(),
     new DayTwelve2022Solver()
 ];
 
@@ -54,5 +55,7 @@ string[] GetInputFromFile(string inputFilePath)
 { 
     inputFilePath = inputFilePath.Replace("\"", "");
     var lines = File.ReadAllLines(inputFilePath);
-    return lines.Where(s => !string.IsNullOrWhiteSpace(s)).ToArray();
+    if (string.IsNullOrWhiteSpace(lines.Last()))
+        lines = lines.SkipLast(1).ToArray();
+    return lines;
 }
