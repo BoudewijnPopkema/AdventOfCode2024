@@ -37,6 +37,7 @@ List<DaySolver> GetSolvers() => [
     new DayFiveSolver(),
     new DaySixSolver(),
     new DaySevenSolver(),
+    new DayEightSolver(),
     new DayTwelve2022Solver()
 ];
 
