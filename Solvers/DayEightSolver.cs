@@ -5,6 +5,7 @@ public class DayEightSolver : DaySolver
     public override int Day => 8;
     private char?[][] _grid;
     private int _gridSize;
+    private List<(Antenna, Antenna)> _pairs = [];
 
     public override void LoadInputData(string[] input)
     {
@@ -22,42 +23,75 @@ public class DayEightSolver : DaySolver
                 _grid[y][x] = value;
             }
         }
+
+        _pairs = GetPairs();
     }
 
     public override string SolvePartOne()
     {
-        var pairs = GetPairs();
-        var antiNodes = GetAntiNodeLocations(pairs);
-
-        return antiNodes.Count.ToString();
+        return GetAntiNodeLocations(_pairs, false).Count.ToString();
     }
 
     public override string SolvePartTwo()
     {
-        throw new NotImplementedException();
+        return GetAntiNodeLocations(_pairs, true).Count.ToString();
     }
-    
-    private List<(int X,int Y)> GetAntiNodeLocations(List<(Antenna, Antenna)> pairs)
+
+    private List<(int X, int Y)> GetAntiNodeLocations(List<(Antenna, Antenna)> pairs, bool line)
     {
-        HashSet<(int X, int Y)> hashSet = [];
-        pairs.SelectMany(GetAntiNodesForPair)
-            .Where(an => an.X >= 0 && an.X < _gridSize && an.Y >= 0 && an.Y < _gridSize)
-            .ToList()
-            .ForEach(x => hashSet.Add(x));
+        var antiNodes = pairs.SelectMany(p => GetAntiNodesForPair(p, line)).ToList();
 
-        return hashSet.ToList();
+        if (line)
+            antiNodes.AddRange(pairs.SelectMany(p => new List<(int X, int Y)> { (p.Item1.X, p.Item1.Y), (p.Item2.X, p.Item2.Y) }).ToList());
+        else 
+            antiNodes.RemoveAll(an => !WithinGrid(an.X, an.Y));
+
+        return antiNodes.Distinct().ToList();
     }
 
-    private List<(int X,int Y)> GetAntiNodesForPair((Antenna, Antenna) pair)
+    private List<(int X, int Y)> GetAntiNodesForPair((Antenna, Antenna) pair, bool line)
+        => line ? GetLineAntiNodesForPair(pair) : GetAntiNodesForPair(pair);
+
+    private List<(int X, int Y)> GetAntiNodesForPair((Antenna, Antenna) pair)
     {
         var deltaX = pair.Item1.X - pair.Item2.X;
         var deltaY = pair.Item1.Y - pair.Item2.Y;
 
-        var antiNodeOne = (pair.Item2.X + deltaX, pair.Item2.Y + deltaY);
-        var antiNodeTwo = (pair.Item1.X - deltaX, pair.Item1.Y - deltaY);
+        var antiNodeOne = (pair.Item1.X + deltaX, pair.Item1.Y + deltaY);
+        var antiNodeTwo = (pair.Item2.X - deltaX, pair.Item2.Y - deltaY);
 
         return [antiNodeOne, antiNodeTwo];
     }
+
+    private List<(int X, int Y)> GetLineAntiNodesForPair((Antenna, Antenna) pair)
+    {
+        List<(int X, int Y)> result = [];
+
+        var deltaX = pair.Item1.X - pair.Item2.X;
+        var deltaY = pair.Item1.Y - pair.Item2.Y;
+
+        var x = pair.Item1.X + deltaX;
+        var y = pair.Item1.Y + deltaY;
+        while (WithinGrid(x, y))
+        {
+            result.Add((x, y));
+            x += deltaX;
+            y += deltaY;
+        }
+
+        x = pair.Item2.X - deltaX;
+        y = pair.Item2.Y - deltaY;
+        while (WithinGrid(x, y))
+        {
+            result.Add((x, y));
+            x -= deltaX;
+            y -= deltaY;
+        }
+
+        return result;
+    }
+
+    private bool WithinGrid(int x, int y) => x >= 0 && x < _gridSize && y >= 0 && y < _gridSize;
 
     private List<(Antenna, Antenna)> GetPairs()
     {
@@ -87,7 +121,7 @@ public class DayEightSolver : DaySolver
                 var freq = _grid[y][x];
                 if (freq.HasValue)
                 {
-                    result.Add(new Antenna{X = x, Y = y, Frequency = freq!.Value, Id = i});
+                    result.Add(new Antenna { X = x, Y = y, Frequency = freq!.Value, Id = i });
                     i++;
                 }
             }
