@@ -29,18 +29,6 @@ catch (NotImplementedException)
 return;
 
 // Local functions
-List<DaySolver> GetSolvers() => [
-    new DayOneSolver(), 
-    new DayTwoSolver(),
-    new DayThreeSolver(),
-    new DayFourSolver(),
-    new DayFiveSolver(),
-    new DaySixSolver(),
-    new DaySevenSolver(),
-    new DayEightSolver(),
-    new DayTwelve2022Solver()
-];
-
 DaySolver GetSolver(string inputDay)
 {
     var day = int.Parse(inputDay);
@@ -62,3 +50,16 @@ string[] GetInputFromFile(string inputFilePath)
         lines = lines.SkipLast(1).ToArray();
     return lines;
 }
+
+List<DaySolver> GetSolvers() => [
+    new DayOneSolver(), 
+    new DayTwoSolver(),
+    new DayThreeSolver(),
+    new DayFourSolver(),
+    new DayFiveSolver(),
+    new DaySixSolver(),
+    new DaySevenSolver(),
+    new DayEightSolver(),
+    new DayNineSolver(),
+    new DayTwelve2022Solver()
+];
