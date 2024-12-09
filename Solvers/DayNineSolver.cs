@@ -3,17 +3,18 @@
 public class DayNineSolver : DaySolver
 {
     public override int Day => 9;
-    private List<ushort?> _backupDisk = [];
+    private readonly List<int?> _backupDisk = [];
+
     public override void LoadInputData(string[] input)
     {
         var block = true;
-        ushort id = 0;
-        foreach (var blockSize in input[0].Select(c => ushort.Parse(c.ToString())))
+        var id = 0;
+        foreach (var blockSize in input[0].Select(c => int.Parse(c.ToString())))
         {
             for (var i = 0; i < blockSize; i++)
             {
                 if (block)
-                    _backupDisk.Add((ushort)(id / 2));
+                    _backupDisk.Add(id / 2);
                 else
                     _backupDisk.Add(null);
             }
@@ -26,6 +27,7 @@ public class DayNineSolver : DaySolver
     public override string SolvePartOne()
     {
         var diskMap = _backupDisk.ToList();
+        Console.WriteLine(string.Join("|", diskMap.Select(n => n == null ? "." : n.ToString())));
         CompactDisk(diskMap);
         return ComputeChecksum(diskMap).ToString();
     }
@@ -37,7 +39,7 @@ public class DayNineSolver : DaySolver
         return ComputeChecksum(diskMap).ToString();
     }
 
-    private static void CompactDisk(List<ushort?> diskMap)
+    private static void CompactDisk(List<int?> diskMap)
     {
         while (true)
         {
@@ -51,30 +53,32 @@ public class DayNineSolver : DaySolver
             diskMap[lastNumberIndex] = null;
         }
     }
-    
-    private static void CompactDiskUnfragmented(List<ushort?> diskMap)
+
+    private static void CompactDiskUnfragmented(List<int?> diskMap)
     {
-        List<ushort> movedBlockIds = [];
-        var blockIndex = (ushort)(diskMap.Count - 1);
+        List<int> movedBlockIds = [];
+        var blockIndex = diskMap.Count - 1;
         while (true)
         {
             var blockToMove = GetNextBlock(blockIndex);
             blockIndex = blockToMove.Index;
             if (blockIndex == 0)
                 return;
-            
-            var fittingSpaceIndex = GetFittingSpaceIndex(blockToMove.Size);
+
+            var fittingSpaceIndex = GetFittingSpaceIndex(blockToMove);
             if (fittingSpaceIndex != null)
             {
                 Move(blockToMove, fittingSpaceIndex.Value);
                 movedBlockIds.Add(blockToMove.Id);
             }
-
-            
+            else
+            {
+                blockIndex--;
+            }
         }
 
         // Local methods
-        Block GetNextBlock(ushort index)
+        Block GetNextBlock(int index)
         {
             while (true)
             {
@@ -83,21 +87,21 @@ public class DayNineSolver : DaySolver
                 var nextBlockStartIndex = diskMap.FindLastIndex(nextBlockEndIndex, x => !x.HasValue || x.Value != id) + 1;
                 var size = nextBlockEndIndex + 1 - nextBlockStartIndex;
 
-                return new Block(id!.Value, (ushort)nextBlockStartIndex, (byte)size);
+                return new Block(id!.Value, nextBlockStartIndex, (byte)size);
             }
         }
 
-        int? GetFittingSpaceIndex(int size)
+        int? GetFittingSpaceIndex(Block block)
         {
             var nextEmptyIndex = 0;
             while (true)
             {
                 nextEmptyIndex = diskMap.FindIndex(nextEmptyIndex + 1, p => !p.HasValue);
-                if (nextEmptyIndex == -1)
+                if (nextEmptyIndex == -1 || nextEmptyIndex > block.Index)
                     return null;
-                
+
                 var spaceSize = diskMap.FindIndex(nextEmptyIndex, p => p.HasValue) - nextEmptyIndex;
-                if (spaceSize >= size)
+                if (spaceSize >= block.Size)
                 {
                     return nextEmptyIndex;
                 }
@@ -114,10 +118,10 @@ public class DayNineSolver : DaySolver
         }
     }
 
-    private static long ComputeChecksum(List<ushort?> diskMap)
+    private static long ComputeChecksum(List<int?> diskMap)
     {
         long checksum = 0;
-        for (var i = 0; i < diskMap.Count ; i++)
+        for (var i = 0; i < diskMap.Count; i++)
         {
             var id = diskMap[i];
             if (id == null)
@@ -125,14 +129,14 @@ public class DayNineSolver : DaySolver
 
             checksum += i * id.Value;
         }
-        
+
         return checksum;
     }
 
-    private readonly struct Block(ushort id, ushort index, byte size)
+    private readonly struct Block(int id, int index, byte size)
     {
-        public ushort Id { get; } = id;
-        public ushort Index { get; } = index;
-        public byte Size { get;} = size;
+        public int Id { get; } = id;
+        public int Index { get; } = index;
+        public byte Size { get; } = size;
     }
 }
