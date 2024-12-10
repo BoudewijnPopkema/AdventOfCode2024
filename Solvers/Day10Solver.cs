@@ -17,13 +17,13 @@ public class Day10Solver : DaySolver
     public override string SolvePartOne()
     {
         var trailHeads = GetTrailheads();
-        return trailHeads.Sum(t => t.GetScore(false)).ToString();
+        return trailHeads.Sum(t => t.GetScore().PeakScore).ToString();
     }
 
     public override string SolvePartTwo()
     {
         var trailHeads = GetTrailheads();
-        return trailHeads.Sum(t => t.GetScore(true)).ToString();
+        return trailHeads.Sum(t => t.GetScore().DistinctScore).ToString();
     }
     
     private static List<Trailhead> GetTrailheads()
@@ -44,7 +44,7 @@ public class Day10Solver : DaySolver
 
     private class Trailhead(int startX, int startY)
     {
-        public int GetScore(bool useDistinctMethod)
+        public (int PeakScore, int DistinctScore) GetScore()
         {
             Queue<Position> trailWalkers = new();
             trailWalkers.Enqueue(new Position(startX, startY));
@@ -66,7 +66,7 @@ public class Day10Solver : DaySolver
                 nextPositions.ForEach(np => trailWalkers.Enqueue(np));
             }
 
-            return useDistinctMethod ? distinctScore : peaksReached.Count;
+            return (PeakScore: peaksReached.Count, DistinctScore: distinctScore);
         }
     }
 
