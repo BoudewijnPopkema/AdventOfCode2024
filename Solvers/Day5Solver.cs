@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode2024.Solvers;
-public class DayFiveSolver : DaySolver
+public class Day5Solver : DaySolver
 {
     public override int Day => 5;
     private List<(int, int)> _rules = [];

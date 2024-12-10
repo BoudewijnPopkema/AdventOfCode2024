@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode2024.Solvers;
 
-public class DaySevenSolver : DaySolver
+public class Day7Solver : DaySolver
 {
     public override int Day => 7;
     private List<List<long>>? _equations;

@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode2024.Solvers;
 
-public class DayNineSolver : DaySolver
+public class Day9Solver : DaySolver
 {
     public override int Day => 9;
     private readonly List<int?> _backupDisk = [];

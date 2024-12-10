@@ -52,14 +52,15 @@ string[] GetInputFromFile(string inputFilePath)
 }
 
 List<DaySolver> GetSolvers() => [
-    new DayOneSolver(), 
-    new DayTwoSolver(),
-    new DayThreeSolver(),
-    new DayFourSolver(),
-    new DayFiveSolver(),
-    new DaySixSolver(),
-    new DaySevenSolver(),
-    new DayEightSolver(),
-    new DayNineSolver(),
-    new DayTwelve2022Solver()
+    new Day1Solver(), 
+    new Day2Solver(),
+    new Day3Solver(),
+    new Day4Solver(),
+    new Day5Solver(),
+    new Day6Solver(),
+    new Day7Solver(),
+    new Day8Solver(),
+    new Day9Solver(),
+    new Day10Solver(),
+    new Day12_2022Solver()
 ];

@@ -2,7 +2,7 @@
 
 namespace AdventOfCode2024.Solvers;
 
-public class DayThreeSolver : DaySolver
+public class Day3Solver : DaySolver
 {
     public override int Day => 3;
     private MatchCollection? _matchCollection;

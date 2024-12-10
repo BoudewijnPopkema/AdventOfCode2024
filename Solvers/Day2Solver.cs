@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode2024.Solvers;
-public class DayTwoSolver : DaySolver
+public class Day2Solver : DaySolver
 {
     private List<List<int>> _reports = [];
     public override void LoadInputData(string[] input)

@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode2024.Solvers;
 
-public class DaySixSolver : DaySolver
+public class Day6Solver : DaySolver
 {
     public override int Day => 6;
     private bool[][]? _grid;
