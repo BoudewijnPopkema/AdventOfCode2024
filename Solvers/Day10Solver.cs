@@ -74,6 +74,8 @@ public class Day10Solver : DaySolver
     {
         List<(int deltaX, int deltaY)> directions = [(0, 1), (0, -1), (-1, 0), (1, 0)];
         List<Position> result = [];
+        
+        var currentHeight = _grid![position.Y][position.X];
 
         foreach (var direction in directions)
         {
@@ -81,7 +83,7 @@ public class Day10Solver : DaySolver
             if (!WithinGrid(newPosition))
                 continue;
 
-            var currentHeight = _grid![position.Y][position.X];
+            
             var newHeight = _grid[newPosition.Y][newPosition.X];
             if (newHeight != currentHeight + 1)
                 continue;
@@ -92,7 +94,7 @@ public class Day10Solver : DaySolver
         return result;
     }
 
-    private static bool WithinGrid(Position position) => position.X >= 0 && position.Y >= 0 && position.X < _gridSize && position.Y < _gridSize;
+    private static bool WithinGrid(Position position) => position is { X: >= 0, Y: >= 0 } && position.X < _gridSize && position.Y < _gridSize;
 
     private class Position(int x, int y)
     {
